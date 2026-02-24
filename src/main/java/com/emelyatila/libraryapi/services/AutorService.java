@@ -1,13 +1,8 @@
 package com.emelyatila.libraryapi.services;
 
-import com.emelyatila.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import com.emelyatila.libraryapi.model.Autor;
 import com.emelyatila.libraryapi.repository.AutorRepository;
-import com.emelyatila.libraryapi.repository.LivroRepository;
 import com.emelyatila.libraryapi.validator.AutorValidator;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +10,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class AutorService {
 
     private final AutorRepository repository;
     private final AutorValidator validator;
-    private final LivroRepository livroRepository;
 
+    public AutorService (AutorRepository repository, AutorValidator validator){
+        this.validator = validator;
+        this.repository = repository;
+    }
 
     public Autor salvar (Autor autor){
         validator.validar(autor);
@@ -41,10 +38,6 @@ public class AutorService {
     }
 
     public void deletar(Autor autor){
-        if (possuilivro(autor)){
-            throw new OperacaoNaoPermitidaException(
-                    "Não é possivél excluir Autor que possui livros cadastrados!");
-        }
         repository.delete(autor);
     }
 
@@ -62,25 +55,5 @@ public class AutorService {
         }
 
         return repository.findAll();
-    }
-
-    public List<Autor> pesquisaByExemple(String nome, String nacionalidade){
-        var autor = new Autor();
-        autor.setNome(nome);
-        autor.setNacionalidade(nacionalidade);
-
-        ExampleMatcher matcher = ExampleMatcher
-                .matching()
-                .withIgnorePaths("id", "dataNascimento", "dataCadastro")
-                .withIncludeNullValues()
-                .withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-        Example<Autor> autorExample = Example.of(autor, matcher);
-
-        return repository.findAll(autorExample);
-    }
-
-    public boolean possuilivro(Autor autor){
-        return livroRepository.existsByAutor(autor);
     }
 }

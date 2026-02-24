@@ -13,7 +13,7 @@ create table autor(
 
 create table livro(
 	id uuid not null primary key,
-	isbn varchar(20) not null unique,
+	isbn varchar(20) not null,
 	titulo varchar(150) not null,
 	data_publicacao date not null,
 	genero varchar (30) not null,
@@ -26,4 +26,3 @@ create table livro(
     genero IN ('FICCAO','ROMANCE','FANTASIA','CIENCIA','MISTERIO','BIOGRAFIA')
 )
 );
-
