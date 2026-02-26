@@ -56,7 +56,23 @@ public class  LivroService {
             specs = specs.and(generoEqual(genero));
         }
 
+        if(anoPublicacao != null){
+            specs = specs.and(anoPublicacaoEqual(anoPublicacao));
+        }
+
+        if(nomeAutor != null){
+            specs = specs.and(nomeAutorLike(nomeAutor));
+        }
+
+
         return  repository.findAll(specs);
     }
 
+    public void atualizar(Livro livro) {
+        if(livro.getId() != null){
+            throw new IllegalArgumentException("para atualizar é necessário que o livro esteja cadastrado: ");
+        }
+            repository.save(livro);
+
+    }
 }
