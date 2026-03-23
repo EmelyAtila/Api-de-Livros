@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface LivroRepository extends JpaRepository<Livro, UUID>, JpaSpecificationExecutor<Livro > {
@@ -24,7 +25,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID>, JpaSpecific
     List<Livro> findByTitulo(String titulo);
 
     // select * from livro where isbn = ?
-    List<Livro> findByIsbn(String isbn);
+    Optional<Livro> findByIsbn(String isbn);
 
     // select * from livro where titulo = ? and preco = ?
     List<Livro> findByTituloAndPreco(String titulo, BigDecimal preco);
@@ -37,12 +38,12 @@ public interface LivroRepository extends JpaRepository<Livro, UUID>, JpaSpecific
 
     //JPQL -> referen cia as entidades e as propiedades
     // select l.* from livro as l order by l.titulo
-    @Query("select l from Livro as l order by l,titulo, l.preco ")
-    List<Livro> ListarTodosOrdenadosPorTituloandPreco();
+    @Query("select l from Livro as l order by l.titulo, l.preco ")
+    List<Livro> listarTodosOrdenadosPorTituloandPreco();
 
     //positional parameters
     @Query("select l from Livro l where l.genero = ?2 order by ?1 ")
-    List<Livro> findByGeneroPositionalParameters(String nomePropiedade, GeneroLivro generoLoivro);
+    List<Livro> findByGeneroPositionalParameters(String nomePropiedade, GeneroLivro generoLivro);
 
     @Modifying
     @Transactional

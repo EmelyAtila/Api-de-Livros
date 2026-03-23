@@ -4,6 +4,7 @@ import com.emelyatila.libraryapi.model.GeneroLivro;
 import com.emelyatila.libraryapi.model.Livro;
 import com.emelyatila.libraryapi.repository.LivroRepository;
 import com.emelyatila.libraryapi.repository.specs.LivroSpecs;
+import com.emelyatila.libraryapi.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,10 @@ import static com.emelyatila.libraryapi.repository.specs.LivroSpecs.*;
 public class  LivroService {
 
     private final LivroRepository repository;
+    private final LivroValidator validator;
 
     public Livro salvar(Livro livro) {
+        validator.validar(livro);
         return repository.save(livro);
     }
 
@@ -72,6 +75,7 @@ public class  LivroService {
         if(livro.getId() != null){
             throw new IllegalArgumentException("para atualizar é necessário que o livro esteja cadastrado: ");
         }
+            validator.validar(livro);
             repository.save(livro);
 
     }
