@@ -1,6 +1,7 @@
 package com.emelyatila.libraryapi.repository;
 
 import com.emelyatila.libraryapi.model.Autor;
+import com.emelyatila.libraryapi.model.repository.AutorRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

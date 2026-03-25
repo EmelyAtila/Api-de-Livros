@@ -3,6 +3,8 @@ package com.emelyatila.libraryapi.repository;
 import com.emelyatila.libraryapi.model.Autor;
 import com.emelyatila.libraryapi.model.GeneroLivro;
 import com.emelyatila.libraryapi.model.Livro;
+import com.emelyatila.libraryapi.model.repository.AutorRepository;
+import com.emelyatila.libraryapi.model.repository.LivroRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -3,13 +3,14 @@ package com.emelyatila.libraryapi.services;
 import com.emelyatila.libraryapi.model.GeneroLivro;
 import com.emelyatila.libraryapi.model.Livro;
 import com.emelyatila.libraryapi.repository.LivroRepository;
-import com.emelyatila.libraryapi.repository.specs.LivroSpecs;
 import com.emelyatila.libraryapi.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,8 +34,14 @@ public class  LivroService {
 
     public void deletar(Livro livro){ repository.delete(livro);}
 
-    public List<Livro> pesquisa(
-            String isbn, String titulo,String nomeAutor, GeneroLivro genero, Integer anoPublicacao){
+    public Page<Livro> pesquisa(
+            String isbn,
+            String titulo,
+            String nomeAutor,
+            GeneroLivro genero,
+            Integer anoPublicacao,
+            Integer pagina,
+            Integer tamanhoPagina){
 
         // select * from livro where isbn = : isbn and ...
 //        Specification<Livro> specs = Specification
@@ -67,8 +74,10 @@ public class  LivroService {
             specs = specs.and(nomeAutorLike(nomeAutor));
         }
 
+        Pageable pageRequest = PageRequest.of(pagina, tamanhoPagina);
 
-        return  repository.findAll(specs);
+
+        return  repository.findAll(specs,pageRequest);
     }
 
     public void atualizar(Livro livro) {
