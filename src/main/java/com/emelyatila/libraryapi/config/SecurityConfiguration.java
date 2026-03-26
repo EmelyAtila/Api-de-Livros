@@ -22,4 +22,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> {authorize.anyRequest().authenticated();})
                 .build();
     }
+
+
 }
