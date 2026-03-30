@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --orange-main:  #F4621F;
+            --orange-light: #FF8C55;
+            --orange-glow:  rgba(244,98,31,0.18);
+            --gray-bg:      #F0F0F2;
+            --gray-card:    #FFFFFF;
+            --gray-border:  #D8D8DE;
+            --gray-muted:   #9A9AA6;
+            --gray-label:   #5A5A66;
+            --white:        #1A1A22;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            min-height: 100vh;
+            background-color: var(--gray-bg);
+            font-family: 'DM Sans', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                    radial-gradient(ellipse 60% 50% at 15% 80%, rgba(244,98,31,0.10) 0%, transparent 65%),
+                    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(244,98,31,0.07) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                    repeating-linear-gradient(
+                            -45deg,
+                            transparent,
+                            transparent 60px,
+                            rgba(0,0,0,0.018) 60px,
+                            rgba(0,0,0,0.018) 61px
+                    );
+            pointer-events: none;
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            background: var(--gray-card);
+            border: 1px solid var(--gray-border);
+            border-radius: 20px;
+            padding: 48px 44px 44px;
+            box-shadow:
+                    0 0 0 1px rgba(0,0,0,0.04) inset,
+                    0 20px 60px rgba(0,0,0,0.10),
+                    0 0 40px var(--orange-glow);
+            animation: cardIn .6s cubic-bezier(.22,1,.36,1) both;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(28px) scale(.97); }
+            to   { opacity: 1; transform: translateY(0)   scale(1);    }
+        }
+
+        .login-card h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1.15;
+            letter-spacing: -.5px;
+            margin-bottom: 6px;
+        }
+        .login-card h1 span { color: var(--orange-main); }
+        .login-sub {
+            font-size: .9rem;
+            color: var(--gray-muted);
+            margin-bottom: 36px;
+        }
+
+        .login-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gray-border), transparent);
+            margin-bottom: 32px;
+        }
+
+        .form-label {
+            font-size: .78rem;
+            font-weight: 500;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--gray-label);
+            margin-bottom: 8px;
+        }
+
+        .input-wrap {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-icon {
+            position: absolute;
+            left: 16px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-muted);
+            transition: color .2s;
+            pointer-events: none;
+            display: flex;
+        }
+        .form-control {
+            background: #F7F7F9;
+            border: 1.5px solid var(--gray-border);
+            border-radius: 10px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: .95rem;
+            padding: 13px 16px 13px 44px;
+            width: 100%;
+            transition: border-color .25s, box-shadow .25s;
+            caret-color: var(--orange-main);
+        }
+        .form-control::placeholder { color: #BABAC4; }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--orange-main);
+            box-shadow: 0 0 0 3px rgba(244,98,31,0.14);
+            background: #FFFFFF;
+        }
+        .input-wrap:focus-within .input-icon { color: var(--orange-main); }
+
+        .options-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+        .form-check-label {
+            font-size: .875rem;
+            color: var(--gray-label);
+            cursor: pointer;
+            user-select: none;
+        }
+        .form-check-input {
+            width: 16px; height: 16px;
+            border: 1.5px solid var(--gray-border);
+            background: #F7F7F9;
+            border-radius: 4px;
+            margin-right: 8px;
+            cursor: pointer;
+            accent-color: var(--orange-main);
+            flex-shrink: 0;
+        }
+        .form-check-input:checked { background-color: var(--orange-main); border-color: var(--orange-main); }
+        .forgot-link {
+            font-size: .875rem;
+            color: var(--orange-light);
+            text-decoration: none;
+            transition: color .2s;
+        }
+        .forgot-link:hover { color: var(--orange-main); text-decoration: underline; }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--orange-main) 0%, var(--orange-light) 100%);
+            color: #fff;
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform .15s, box-shadow .2s, filter .2s;
+            box-shadow: 0 6px 24px rgba(244,98,31,.45);
+        }
+        .btn-login::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+            pointer-events: none;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+            box-shadow: 0 10px 32px rgba(244,98,31,.6);
+        }
+        .btn-login:active { transform: translateY(0); filter: brightness(.96); }
+
+        .signup-row {
+            text-align: center;
+            margin-top: 24px;
+            font-size: .875rem;
+            color: var(--gray-muted);
+        }
+        .signup-row a {
+            color: var(--orange-light);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color .2s;
+        }
+        .signup-row a:hover { color: var(--orange-main); }
+
+        @media (max-width: 500px) {
+            .login-card { padding: 36px 24px 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+
+    <h1>Bem-vindo<span>.</span></h1>
+    <p class="login-sub">Entre com suas credenciais para continuar.</p>
+
+    <div class="login-divider"></div>
+
+    <form action="#" method="post" th:action="@{/login}" novalidate>
+
+        <!-- Usuário -->
+        <div class="mb-1">
+            <label class="form-label" for="username">Usuário</label>
+        </div>
+        <div class="input-wrap">
+            <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    class="form-control"
+                    placeholder="seu usuário"
+                    autocomplete="username"
+                    required
+            />
+            <span class="input-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.025 10 8 10c-2.026 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                </svg>
+            </span>
+        </div>
+
+        <!-- Senha -->
+        <div class="mb-1">
+            <label class="form-label" for="password">Senha</label>
+        </div>
+        <div class="input-wrap">
+            <input
+                    id="password"
+                    name="password"
+                    required
+                    type="password"
+                    class="form-control"
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+            />
+            <span class="input-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                </svg>
+            </span>
+        </div>
+
+<!--        &lt;!&ndash; Remember / Forgot &ndash;&gt;-->
+<!--        <div class="options-row">-->
+<!--            <div class="form-check d-flex align-items-center gap-2">-->
+<!--                <input class="form-check-input" type="checkbox" id="remember" name="remember"/>-->
+<!--                <label class="form-check-label" for="remember">Lembrar-me</label>-->
+<!--            </div>-->
+<!--            <a href="#" class="forgot-link">Esqueceu a senha?</a>-->
+<!--        </div>-->
+
+        <!-- Button -->
+        <button type="submit" class="btn-login">Entrar agora</button>
+
+    </form>
+
+    <!-- Sign up -->
+    <p class="signup-row">
+        Não tem uma conta? <a href="#">Cadastre-se</a>
+    </p>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
