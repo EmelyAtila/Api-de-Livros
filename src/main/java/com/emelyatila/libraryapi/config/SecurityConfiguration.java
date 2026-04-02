@@ -1,7 +1,10 @@
 package com.emelyatila.libraryapi.config;
 
+import com.emelyatila.libraryapi.security.CustomUserDetailsService;
+import com.emelyatila.libraryapi.services.UsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,7 +31,7 @@ public class SecurityConfiguration {
                     configurer.loginPage("/login");
                 })
                 .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers("/login").permitAll();
+                    authorize.requestMatchers("/login").permitAll();authorize.requestMatchers(HttpMethod.POST,"/usuarios").permitAll();
                     authorize.requestMatchers("/autores/**").hasRole("ADMIN");
                     authorize.requestMatchers("/livros/**").hasAnyRole("ADMIN","USER");
                     authorize.anyRequest().authenticated();})
@@ -40,24 +43,29 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder(10);
     }
 
-    // Para uso em memória
+//    @Bean
+//    public UserDetailsService userDetailsService(PasswordEncoder encoder){
+//
+//    // Para uso em memória
+//       UserDetails user1 = User.builder()
+//                .username("usuario")
+//               .password(encoder.encode("123"))
+//                .roles("USER")
+//                .build();
+//
+//       UserDetails user2 = User.builder()
+//                .username("admin")
+//                .password(encoder.encode("321"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(user1,user2);
+//    }
+
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder encoder){
+    public UserDetailsService userDetailsService(UsuarioService usuarioService){
 
-        UserDetails user1 = User.builder()
-                .username("usuario")
-                .password(encoder.encode("123"))
-                .roles("USER")
-                .build();
-
-        UserDetails user2 = User.builder()
-                .username("admin")
-                .password(encoder.encode("321"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user1,user2);
+        return new CustomUserDetailsService(usuarioService);
     }
-
 
 }
