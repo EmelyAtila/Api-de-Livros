@@ -26,3 +26,10 @@ create table livro(
     genero IN ('FICCAO','ROMANCE','FANTASIA','CIENCIA','MISTERIO','BIOGRAFIA')
 )
 );
+
+create table usuario(
+    id uuid not null primary key,
+    login vachar(20) not null unique,
+    senha vachar(300) not null,
+    roles varchar[]
+);
