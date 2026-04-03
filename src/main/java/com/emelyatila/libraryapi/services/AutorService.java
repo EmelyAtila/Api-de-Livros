@@ -1,8 +1,11 @@
 package com.emelyatila.libraryapi.services;
 
 import com.emelyatila.libraryapi.model.Autor;
+import com.emelyatila.libraryapi.model.Usuario;
 import com.emelyatila.libraryapi.repository.AutorRepository;
+import com.emelyatila.libraryapi.security.SecurityService;
 import com.emelyatila.libraryapi.validator.AutorValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,18 +13,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AutorService {
 
     private final AutorRepository repository;
     private final AutorValidator validator;
-
-    public AutorService (AutorRepository repository, AutorValidator validator){
-        this.validator = validator;
-        this.repository = repository;
-    }
+    private final SecurityService securityService;
 
     public Autor salvar (Autor autor){
         validator.validar(autor);
+        Usuario usuario = securityService.obterUsuarioLogado();
+        autor.setUsuario(usuario);
         return repository.save(autor);
     }
 

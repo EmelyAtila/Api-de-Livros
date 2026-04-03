@@ -2,11 +2,19 @@ package com.emelyatila.libraryapi.controller;
 
 import com.emelyatila.libraryapi.controller.dto.AutorDTO;
 import com.emelyatila.libraryapi.controller.dto.ErroResposta;
+import com.emelyatila.libraryapi.controller.mappers.AutorMapper;
 import com.emelyatila.libraryapi.exceptions.RegistroDuplicadoException;
 import com.emelyatila.libraryapi.model.Autor;
+import com.emelyatila.libraryapi.model.Usuario;
+import com.emelyatila.libraryapi.security.SecurityService;
 import com.emelyatila.libraryapi.services.AutorService;
+import com.emelyatila.libraryapi.services.UsuarioService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -19,35 +27,24 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("autores")
 //http://localhost:8080/autores
-public class AutorController {
+@RequiredArgsConstructor
+public class AutorController implements GenericController {
 
     private final AutorService service;
-
-    public AutorController(AutorService service){
-        this.service = service;
-    }
+    private final AutorMapper mapper;
 
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody AutorDTO autor){
-        try {
-            Autor autorEntidade = autor.mapearParaAutor();
-            service.salvar(autorEntidade);
+    @PreAuthorize("hasRole('GERENTE')")
+    public ResponseEntity<Object> salvar(@RequestBody AutorDTO dto){
 
-            // criar url com id
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/ {id}")
-                    .buildAndExpand(autorEntidade.getId())
-                    .toUri();
-
-            return ResponseEntity.created(location).build();
-        } catch(RegistroDuplicadoException e){
-            var erroDTO = ErroResposta.conflito(e.getMessage());
-            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
-        }
+        Autor autor = mapper.toEntity(dto);
+        service.salvar(autor);
+        URI location = gerarHeaderLocation(autor.getId());
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyRole('GERENTE','OPERADOR')")
     public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id){
         var idAutor = UUID.fromString(id);
         Optional<Autor> autorOptional = service.obterPorId(idAutor);
@@ -93,6 +90,7 @@ public class AutorController {
 //    }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> deletar(@PathVariable("id") String id){
         var idAutor = UUID.fromString(id);
         Optional<Autor> autorOptional = service.obterPorId(idAutor);
@@ -106,6 +104,7 @@ public class AutorController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('GERENTE','OPERADOR')")
     public ResponseEntity<List <AutorDTO>> pesquisar(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "nacionalidade", required = false)String nacionalidade){
@@ -125,6 +124,7 @@ public class AutorController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> atualizar(
             @PathVariable("id") String id,
             @RequestBody AutorDTO dto){

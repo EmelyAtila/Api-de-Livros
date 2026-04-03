@@ -2,7 +2,9 @@ package com.emelyatila.libraryapi.services;
 
 import com.emelyatila.libraryapi.model.GeneroLivro;
 import com.emelyatila.libraryapi.model.Livro;
+import com.emelyatila.libraryapi.model.Usuario;
 import com.emelyatila.libraryapi.repository.LivroRepository;
+import com.emelyatila.libraryapi.security.SecurityService;
 import com.emelyatila.libraryapi.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,9 +24,12 @@ public class  LivroService {
 
     private final LivroRepository repository;
     private final LivroValidator validator;
+    private final SecurityService securityService;
 
     public Livro salvar(Livro livro) {
         validator.validar(livro);
+        Usuario usuario = securityService.obterUsuarioLogado();
+        livro.setUsuario(usuario);
         return repository.save(livro);
     }
 
