@@ -36,6 +36,7 @@ public class SecurityConfiguration {
                     authorize.requestMatchers("/login").permitAll();authorize.requestMatchers(HttpMethod.POST,"/usuarios").permitAll();
                     authorize.anyRequest().authenticated();
                 })
+                .oauth2Login(Customizer.withDefaults())
                 .build();
     }
 
