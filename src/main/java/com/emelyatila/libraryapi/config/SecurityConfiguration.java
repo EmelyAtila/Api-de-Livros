@@ -64,7 +64,7 @@ public class SecurityConfiguration {
 //        return new InMemoryUserDetailsManager(user1,user2);
 //    }
 
-    @Bean
+//    @Bean
     public UserDetailsService userDetailsService(UsuarioService usuarioService){
 
         return new CustomUserDetailsService(usuarioService);
