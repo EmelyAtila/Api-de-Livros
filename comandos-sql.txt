@@ -19,7 +19,7 @@ create table livro(
 	genero varchar (30) not null,
 	preco numeric(18,2),
 	data_cadastro timestamp,
-    data_atrualizacao timestamp,
+    data_atualizacao timestamp,
     id_usuario uuid,
 	id_autor uuid not null references autor(id),
 	CONSTRAINT chk_genero CHECK (

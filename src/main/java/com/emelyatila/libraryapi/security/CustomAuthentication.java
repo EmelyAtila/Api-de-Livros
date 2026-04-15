@@ -22,7 +22,7 @@ public class CustomAuthentication implements Authentication {
         return this.usuario
                 .getRoles()
                 .stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
 
@@ -43,7 +43,7 @@ public class CustomAuthentication implements Authentication {
 
     @Override
     public boolean isAuthenticated() {
-        return false;
+        return true;
     }
 
     @Override
